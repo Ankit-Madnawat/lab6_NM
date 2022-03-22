@@ -1,0 +1,78 @@
+---
+- hosts: liverpool
+  connection: local
+  become: yes
+  become_method: sudo
+  gather_facts: true
+  
+  tasks:
+    - name: Executing shell command - NETSTAT for route table
+      shell: netstat
+      register: output_netstat
+
+    - name: Copying netstat output into a file
+      copy:
+        dest: /Liverpool_Admin/Route_Info/LP_Route_Table.txt
+        content: "{{ output_netstat.stdout }}"
+
+    - name: Executing shell command - ps for running processes
+      shell: ps aux --sort=-%mem | head
+      register: output_ps
+
+    - name: Copying netstat output into a file
+      copy:
+        dest: /Liverpool_Admin/Route_Info/LP_Top10_runningprocess.txt
+        content: "{{ output_ps.stdout }}"
+
+    - name: Secure transfer of route table file to ansible manager
+      expect:
+        command: scp netman@192.168.10.1:/Liverpool_Admin/Route_Info/LP_Route_Table.txt /home/netman
+        responses:
+          "Are you sure you want to continue connecting (yes/no)?": 'yes'
+          "netman@192.168.10.1's password:": 'netman'
+
+    - name: Secure transfer of top 10 running processes file to ansible manager
+      expect:
+        command: scp netman@192.168.10.1:/Liverpool_Admin/Route_Info/LP_Top10_runningprocess.txt /home/netman
+        responses:
+          "Are you sure you want to continue connecting (yes/no)?": 'yes'
+          "netman@192.168.10.1's password:": 'netman'
+
+- hosts: realmadrid
+  connection: local
+  become: yes
+  become_method: sudo
+  gather_facts: true
+  
+  tasks:
+    - name: Executing shell command - NETSTAT for route table
+      shell: netstat
+      register: output_netstat
+
+    - name: Copying netstat output into a file
+      copy:
+        dest: /RealMadrid_Admin/Route_Info/RM_Route_Table.txt
+        content: "{{ output_netstat.stdout }}"
+
+    - name: Executing shell command - ps for running processes
+      shell: ps aux --sort=-%mem | head
+      register: output_ps
+
+    - name: Copying netstat output into a file
+      copy:
+        dest: /RealMadrid_Admin/Route_Info/RM_Top10_runningprocess.txt
+        content: "{{ output_ps.stdout }}"
+
+    - name: Secure transfer of route table file to ansible manager
+      expect:
+        command: scp netman@172.16.10.1:/RealMadrid_Admin/Route_Info/RM_Route_Table.txt /home/netman
+        responses:
+          "Are you sure you want to continue connecting (yes/no)?": 'yes'
+          "netman@172.16.10.1's password:": 'netman'
+
+    - name: Secure transfer of top 10 running processes file to ansible manager
+      expect:
+        command: scp netman@171.16.10.1:/RealMadrid_Admin/Route_Info/RM_Top10_runningprocess.txt /home/netman
+        responses:
+          "Are you sure you want to continue connecting (yes/no)?": 'yes'
+          "netman@172.16.10.1's password:": 'netman'

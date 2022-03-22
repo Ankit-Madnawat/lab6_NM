@@ -1,0 +1,34 @@
+---
+- hosts: liverpool
+  connection: local
+  become: yes
+  become_method: sudo
+  gather_facts: true
+  
+  tasks:
+    - name: Combining all key files and sending to server
+      assemble:
+        src: /home/netman/Attack/.ssh
+        dest: /home/netman/.ssh/Liverpool_authorizedKeys.txt
+
+    - name: Sending file from host to server
+      fetch:
+        src: /home/netman/.ssh/Liverpool_authorizedKeys.txt
+        dest: /home/netman/.ssh
+
+- hosts: realmadrid
+  connection: local
+  become: yes
+  become_method: sudo
+  gather_facts: true
+  
+  tasks:
+    - name: Combining all key files and sending to server
+      assemble:
+        src: /home/netman/Attack/.ssh
+        dest: /home/netman/.ssh/RealMadrid_authorizedKeys.txt
+
+    - name: Sending file from host to server
+      fetch:
+        src: /home/netman/.ssh/RealMadrid_authorizedKeys.txt
+        dest: /home/netman/.ssh

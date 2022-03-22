@@ -1,0 +1,87 @@
+---
+- hosts: liverpool
+  connection: local
+  become: yes
+  become_method: sudo
+  gather_facts: true
+  
+  tasks:
+    - name: Creating group
+      group:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - Attack
+        - Defense
+        - Captain
+
+    - name: Creating directory to provide group permissions
+      file:
+        path: "{{ item.path }}"
+        state: directory
+        mode: "{{ item.mode }}"
+        group: "{{ item.group }}"
+      loop:
+        - { path: '/home/netman/Attack', mode: '0666', group: 'Attack' }
+        - { path: '/home/netman/Defense', mode: '0111', group: 'Defense' }
+        - { path: '/home/netman/Captain', mode: '0777', group: 'Captain' }
+
+    - name: Creating users for particular group
+      user:
+        name: "{{ item.name }}"
+        group: "{{ item.group }}"
+      loop:
+        - { name: 'hkewell', group: 'Attack' }
+        - { name: 'mowen', group: 'Attack' }
+        - { name: 'jcarragher', group: 'Defense' }
+        - { name: 'dagger', group: 'Defense' }
+
+    - name: Adding user in CAPTAIN and one additional group
+      user:
+        name: sgerrard
+        groups: Captain, root
+        append: yes
+
+- hosts: realmadrid
+  connection: local
+  become: yes
+  become_method: sudo
+  gather_facts: true
+  
+  tasks:
+    - name: Creating group
+      group:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - Attack
+        - Defense
+        - Captain
+
+    - name: Creating directory to provide group permissions
+      file:
+        path: "{{ item.path }}"
+        state: directory
+        mode: "{{ item.mode }}"
+        group: "{{ item.group }}"
+      loop:
+        - { path: '/home/netman/Attack', mode: '0666', group: 'Attack' }
+        - { path: '/home/netman/Defense', mode: '0111', group: 'Defense' }
+        - { path: '/home/netman/Captain', mode: '0777', group: 'Captain' }
+
+    - name: Creating users for particular group
+      user:
+        name: "{{ item.name }}"
+        group: "{{ item.group }}"
+      loop:
+        - { name: 'lfigo', group: 'Attack' }
+        - { name: 'rsoldado', group: 'Attack' }
+        - { name: 'rcarlos', group: 'Defense' }
+        - { name: 'fcannavaro', group: 'Defense' }
+
+    - name: Adding user in CAPTAIN and one additional group
+      user:
+        name: zzidane
+        groups: Captain, root
+        append: yes
+

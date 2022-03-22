@@ -1,0 +1,114 @@
+---
+- hosts: liverpool
+  connection: local
+  become: yes
+  become_method: sudo
+  gather_facts: true
+  
+  tasks:
+    - name: Creating directory to store route table information
+      file:
+        path: /Liverpool_Admin/Route_Info/
+        state: directory
+        mode: '0774'
+        owner: sgerrard
+        group: Captain
+
+    - name: Creating a text file inside Route_Info directory
+      copy:
+        dest: /Liverpool_Admin/Route_Info/Captain_Details.txt
+        content: |
+          Full Name - Steven George Gerrard
+          Nationality - United Kingdom
+          Username - sgerrard
+
+    - name: Executing shell command - NETSTAT for route table
+      shell: netstat
+      register: output_netstat
+
+    - name: Copying netstat output into a file
+      copy:
+        dest: "/Liverpool_Admin/Route_Info/LP_Route_Table.txt"
+        content: "{{ output_netstat.stdout }}"
+      delegate_to: localhost
+
+    - name: Executing shell command - ps for running processes
+      shell: ps aux --sort=-%mem | head
+      register: output_ps
+
+    - name: Copying netstat output into a file
+      copy:
+        dest: "/Liverpool_Admin/Route_Info/LP_Top10_runningprocess.txt"
+        content: "{{ output_ps.stdout }}"
+      delegate_to: localhost
+
+    - name: Secure transfer of route table file to ansible manager
+      expect:
+        command: scp /Liverpool_Admin/Route_Info/LP_Route_Table.txt netman@192.168.10.2:/home/netman
+        responses:
+          (?i)Are you sure you want to continue connecting (yes/no)?: 'yes'
+          (?i)netman@192.168.10.2's password: 'netman'
+
+    - name: Secure transfer of top ten running processes file to ansible manager
+      expect:
+        command: scp /Liverpool_Admin/Route_Info/LP_Top10_runningprocess.txt  netman@192.168.10.2:/home/netman
+        responses:
+          (?i)Are you sure you want to continue connecting (yes/no)?: 'yes'
+          (?i)netman@192.168.10.2's password: 'netman'
+
+- hosts: realmadrid
+  connection: local
+  become: yes
+  become_method: sudo
+  gather_facts: true
+  
+  tasks:
+    - name: Creating directory to store route table information
+      file:
+        path: /RealMadrid_Admin/Route_Info/
+        state: directory
+        mode: '0774'
+        owner: zzidane
+        group: Captain
+
+    - name: Creating a text file inside Route_Info directory
+      copy:
+        dest: /RealMadrid_Admin/Route_Info/Captain_Details.txt
+        content: |
+          Full Name - Zinedine Yazid Zidane
+          Nationality - France
+          Username - zzidane
+
+    - name: Executing shell command - NETSTAT for route table
+      shell: netstat
+      register: output_netstat
+
+    - name: Copying netstat output into a file
+      copy:
+        dest: "/RealMadrid_Admin/Route_Info/RM_Route_Table.txt"
+        content: "{{ output_netstat.stdout }}"
+      delegate_to: localhost
+
+    - name: Executing shell command - ps for running processes
+      shell: ps aux --sort=-%mem | head
+      register: output_ps
+
+    - name: Copying netstat output into a file
+      copy:
+        dest: "/RealMadrid_Admin/Route_Info/RM_Top10_runningprocess.txt"
+        content: "{{ output_ps.stdout }}"
+      delegate_to: localhost
+
+    - name: Secure transfer of route table file to ansible manager
+      expect:
+        command: scp /RealMadrid_Admin/Route_Info/RM_Route_Table.txt netman@172.16.10.2:/home/netman
+        responses:
+          (?i)Are you sure you want to continue connecting (yes/no)?: 'yes'
+          (?i)netman@172.16.10.2's password: 'netman'
+
+    - name: Secure transfer of top ten running processes file to ansible manager
+      expect:
+        command: scp /RealMadrid_Admin/Route_Info/RM_Top10_runningprocess.txt netman@172.16.10.2:/home/netman
+        responses:
+          (?i)Are you sure you want to continue connecting (yes/no)?: 'yes'
+          (?i)netman@172.16.10.2's password: 'netman'

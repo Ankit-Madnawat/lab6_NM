@@ -1,0 +1,18 @@
+---
+- hosts: lab6
+  connection: local
+  become: yes
+  become_method: sudo
+  gather_facts: true
+  
+  tasks:
+    - name: PACKAGE INSTALLING AND UPDATING
+      apt:
+        name: "{{ item }}"
+        state: latest
+      loop:
+        - apache2
+        - vsftpd
+        - python3-pip
+        - expect
+

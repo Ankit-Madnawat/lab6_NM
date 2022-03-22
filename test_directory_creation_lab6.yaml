@@ -1,0 +1,19 @@
+---
+- hosts: liverpool
+  connection: local
+  become: yes
+  become_method: sudo
+  gather_facts: true
+  
+  tasks:
+    - name: Creating directory to store all ssh key files.
+      local_action:
+        module: file
+        path: /home/netman/keys_LP
+        state: directory
+
+    - name: Copying key file of user 1 to keys_LP directory
+      copy:
+        src: /home/netman/MOWEN/.ssh/mowen.pub
+        dest: /home/netman/keys_LP
+        remote_src: true

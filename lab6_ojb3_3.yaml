@@ -1,0 +1,46 @@
+---
+- hosts: liverpool
+  connection: local
+  become: yes
+  become_method: sudo
+  gather_facts: true
+  
+  tasks:
+    - name: Creating directory to store route table information
+      file:
+        path: /Liverpool_Admin/Route_Info
+        state: directory
+        mode: '0774'
+        owner: sgerrard
+        group: Captain
+
+    - name: Creating a text file inside Route_Info directory
+      copy:
+        dest: /Liverpool_Admin/Route_Info/Captain_Details.txt
+        content: |
+          Full Name - Steven George Gerrard
+          Nationality - United Kingdom
+          Username - sgerrard
+
+- hosts: realmadrid
+  connection: local
+  become: yes
+  become_method: sudo
+  gather_facts: true
+  
+  tasks:
+    - name: Creating directory to store route table information
+      file:
+        path: /RealMadrid_Admin/Route_Info
+        state: directory
+        mode: '0774'
+        owner: zzidane
+        group: Captain
+
+    - name: Creating a text file inside Route_Info directory
+      copy:
+        dest: /RealMadrid_Admin/Route_Info/Captain_Details.txt
+        content: |
+          Full Name - Zinedine Yazid Zidane
+          Nationality - France
+          Username - zzidane

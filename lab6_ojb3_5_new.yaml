@@ -1,0 +1,70 @@
+---
+- hosts: liverpool
+  connection: local
+  become: yes
+  become_method: sudo
+  gather_facts: true
+  
+  tasks:
+    - name: Creating directory to store all ssh key files.
+      file:
+        path: /home/netman/keys_LP
+        state: directory
+        mode: '0777'
+
+    - name: Copying key file of users to keys_LP directory
+      copy:
+        src: "{{ item }}"
+        dest: /home/netman/keys_LP
+        remote_src: true
+      loop:
+        - /home/netman/MOWEN/.ssh/mowen.pub
+        - /home/netman/DAGGER/.ssh/dagger.pub
+        - /home/netman/SGERRARD/.ssh/sgerrard.pub
+
+    - name: Copying all key files into one file
+      assemble:
+        src: /home/netman/keys_LP
+        dest: /home/netman/.ssh/Liverpool_authorizedKeys.txt
+
+    - name: Secure transfer of Liverpool_authorizedKeys.txt file to ansible manager
+      expect:
+        command: scp /home/netman/.ssh/Liverpool_authorizedKeys.txt  netman@192.168.10.2:/home/netman/.ssh
+        responses:
+          (?i)Are you sure you want to continue connecting (yes/no)?: 'yes'
+          (?i)netman@192.168.10.2's password: 'netman'
+
+- hosts: realmadrid
+  connection: local
+  become: yes
+  become_method: sudo
+  gather_facts: true
+  
+  tasks:
+    - name: Creating directory to store all ssh key files.
+      file:
+        path: /home/netman/keys_RM
+        state: directory
+        mode: '0777'
+
+    - name: Copying key file of users to keys_RM directory
+      copy:
+        src: "{{ item }}"
+        dest: /home/netman/keys_RM
+        remote_src: true
+      loop:
+        - /home/netman/LFIGO/.ssh/lfigo.pub
+        - /home/netman/FCANNAVARO/.ssh/fcannavaro.pub
+        - /home/netman/ZZIDANE/.ssh/zzidane.pub
+
+    - name: Copying all key files into one file
+      assemble:
+        src: /home/netman/keys_RM
+        dest: /home/netman/.ssh/RealMadrid_authorizedKeys.txt
+
+    - name: Secure transfer of RealMadrid_authorizedKeys.txt file to ansible manager
+      expect:
+        command: scp /home/netman/.ssh/RealMadrid_authorizedKeys.txt  netman@172.16.10.2:/home/netman/.ssh
+        responses:
+          (?i)Are you sure you want to continue connecting (yes/no)?: 'yes'
+          (?i)netman@172.16.10.2's password: 'netman'
